@@ -4,10 +4,17 @@ import { BrowserRouter } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import App from "./components/App";
 import "./index.css";
+import configureStore from "./redux/configigureStore";
+// import { Provider as ReduxProvider } from "react-redux";
+import { Provider } from "react-redux";
+
+const store = configureStore();
 
 render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <Provider store={store}>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </Provider>,
   document.getElementById("app")
 );
