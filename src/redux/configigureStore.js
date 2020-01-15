@@ -2,6 +2,7 @@ import { createStore, applyMiddleware, compose } from "redux";
 import rootReducer from "./reducers/index";
 //warns us if we mutate state in the redux store
 import reduxImmutableStateInvariant from "redux-immutable-state-invariant";
+import thunk from "redux-thunk";
 
 export default function configureStore(initialState) {
   const composeEnchancers =
@@ -9,6 +10,6 @@ export default function configureStore(initialState) {
   return createStore(
     rootReducer,
     initialState,
-    composeEnchancers(applyMiddleware(reduxImmutableStateInvariant()))
+    composeEnchancers(applyMiddleware(thunk, reduxImmutableStateInvariant()))
   );
 }
