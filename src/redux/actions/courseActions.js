@@ -1,5 +1,6 @@
 import * as types from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
+import * as authorApi from "../../api/authorApi";
 
 // this function is called an Action Creator
 export function createCourse(course) {
@@ -11,6 +12,10 @@ export function createCourse(course) {
 
 export function loadCoursesSuccess(courses) {
   return { type: types.LOAD_COURSES_SUCCESS, courses: courses };
+}
+
+export function loadAuthorsSuccess(authors) {
+  return { type: types.LOAD_AUTHORS_SUCCESS, authors: authors };
 }
 
 export function loadCourses() {
@@ -25,5 +30,15 @@ export function loadCourses() {
       .catch(error => {
         throw error;
       });
+  };
+}
+
+export function loadAuthors() {
+  return function(dispatch) {
+    return authorApi.getAuthors().then(authors => {
+      dispatch(loadAuthorsSuccess(authors)).catch(error => {
+        throw error;
+      });
+    });
   };
 }

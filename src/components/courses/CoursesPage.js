@@ -16,6 +16,9 @@ class CoursesPage extends React.Component {
     this.props.actions.loadCourses().catch(error => {
       alert("loading courses failed ", error);
     });
+    this.props.actions
+      .loadAuthors()
+      .catch(error => alert("error loading authors ", error));
   }
 
   // handleChange = event => {
@@ -53,6 +56,7 @@ class CoursesPage extends React.Component {
 
 CoursesPage.propTypes = {
   courses: PropTypes.array.isRequired,
+  authors: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired
 };
 
@@ -61,7 +65,8 @@ CoursesPage.propTypes = {
 //this component will rerender every time they change
 function mapStateToProps(state) {
   return {
-    courses: state.courses
+    courses: state.courses,
+    authors: state.authors
   };
 }
 
