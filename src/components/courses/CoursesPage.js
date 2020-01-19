@@ -1,24 +1,30 @@
 import React from "react";
 import { connect } from "react-redux";
 import * as courseActions from "../../redux/actions/courseActions";
+import * as authorActions from "../../redux/actions/authorActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
+import { Redirect } from "react-router-dom";
 
 class CoursesPage extends React.Component {
-  // state = {
-  //   course: {
-  //     title: ""
-  //   }
-  // };
+  state = {
+    redirectToAddCoursePage: false
+  };
 
   componentDidMount() {
-    this.props.actions.loadCourses().catch(error => {
-      alert("loading courses failed ", error);
-    });
-    this.props.actions
-      .loadAuthors()
-      .catch(error => alert("error loading authors ", error));
+    const { courses, authors, cActions, aActions } = this.props;
+    //only call api when we have no data
+    if (courses.length === 0) {
+      cActions.loadCourses().catch(error => {
+        alert("loading courses failed ", error);
+      });
+    }
+    if (authors.length === 0) {
+      aActions
+        .loadAuthors()
+        .catch(error => alert("error loading authors ", error));
+    }
   }
 
   // handleChange = event => {
@@ -43,8 +49,16 @@ class CoursesPage extends React.Component {
     return (
       // if onSubmit is assigned in the form and not on a button => you can submit by pressing enter too!
       <>
+        {/* lol righthand side only evaluates if left hand side is true !!! */}
+        {this.state.redirectToAddCoursePage && <Redirect to="/course" />}
         <h2>Courses</h2>
-
+        <button
+          style={{ marginBottm: 20 }}
+          className="btn btn-primary add-course"
+          onClick={() => this.setState({ redirectToAddCoursePage: true })}
+        >
+          Add Course
+        </button>
         <CourseList courses={this.props.courses}></CourseList>
         {/* {this.props.courses.map(course => (
           <div key={course.title}>{course.title}</div>
@@ -57,7 +71,8 @@ class CoursesPage extends React.Component {
 CoursesPage.propTypes = {
   courses: PropTypes.array.isRequired,
   authors: PropTypes.array.isRequired,
-  actions: PropTypes.object.isRequired
+  cActions: PropTypes.object.isRequired,
+  aActions: PropTypes.object.isRequired
 };
 
 //determines what part of the global state is passed in the props to this component
@@ -65,7 +80,16 @@ CoursesPage.propTypes = {
 //this component will rerender every time they change
 function mapStateToProps(state) {
   return {
-    courses: state.courses,
+    // courses: state.courses,
+    courses:
+      state.authors.length === 0
+        ? []
+        : state.courses.map(course => {
+            return {
+              ...course,
+              authorName: state.authors.find(a => a.id === course.authorId).name
+            };
+          }),
     authors: state.authors
   };
 }
@@ -74,7 +98,8 @@ function mapStateToProps(state) {
 // return {createCourse: courseActions.createCourse }
 function mapDispatchToProps(dispatch) {
   return {
-    actions: bindActionCreators(courseActions, dispatch)
+    cActions: bindActionCreators(courseActions, dispatch),
+    aActions: bindActionCreators(authorActions, dispatch)
   };
 }
 

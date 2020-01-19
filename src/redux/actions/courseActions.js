@@ -1,21 +1,16 @@
 import * as types from "./actionTypes";
 import * as courseApi from "../../api/courseApi";
-import * as authorApi from "../../api/authorApi";
-
-// this function is called an Action Creator
-export function createCourse(course) {
-  // CREATE_COURSE is the action's type
-  return { type: types.CREATE_COURSE, course: course };
-  //   object shorthand sintax sugar
-  //   return { type: "CREATE_COURSE", course };
-}
 
 export function loadCoursesSuccess(courses) {
   return { type: types.LOAD_COURSES_SUCCESS, courses: courses };
 }
 
-export function loadAuthorsSuccess(authors) {
-  return { type: types.LOAD_AUTHORS_SUCCESS, authors: authors };
+export function createCourseSuccess(course) {
+  return { type: types.CREATE_COURSE_SUCCESS, course: course };
+}
+
+export function updateCourseSuccess(course) {
+  return { type: types.UPDATE_COURSE_SUCCESS, course: course };
 }
 
 export function loadCourses() {
@@ -33,12 +28,17 @@ export function loadCourses() {
   };
 }
 
-export function loadAuthors() {
+export function saveCourse(course) {
   return function(dispatch) {
-    return authorApi.getAuthors().then(authors => {
-      dispatch(loadAuthorsSuccess(authors)).catch(error => {
+    return courseApi
+      .saveCourse(course)
+      .then(savedCourse => {
+        course.id
+          ? dispatch(updateCourseSuccess(savedCourse))
+          : dispatch(createCourseSuccess(savedCourse));
+      })
+      .catch(error => {
         throw error;
       });
-    });
   };
 }
