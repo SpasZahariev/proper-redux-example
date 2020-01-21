@@ -24,11 +24,13 @@ function ManageCoursePage(props) {
       loadCourses().catch(error => {
         alert("loading courses failed ", error);
       });
+    } else {
+      setCourse({ ...props.course });
     }
     if (authors.length === 0) {
       loadAuthors().catch(error => alert("error loading authors ", error));
     }
-  }, []);
+  }, [props.course]);
 
   // this is weird --- name is the actual property name and I use it with [name]
   // if name is the authorId variable then return an int
@@ -68,13 +70,22 @@ ManageCoursePage.propTypes = {
   history: PropTypes.object.isRequired
 };
 
+export function getCourseBySlug(courses, slug) {
+  return courses.find(course => course.slug === slug) || null;
+}
+
 //determines what part of the global state is passed in the props to this component
 //request exactly the data this component needs - AND NO MORE!
 //this component will rerender every time they change
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  const slug = ownProps.match.params.slug;
+  const course =
+    slug && state.courses.length > 0
+      ? getCourseBySlug(state.courses, slug)
+      : newCourse;
   return {
     // courses: state.courses,
-    course: newCourse,
+    course: course,
     courses: state.courses,
     authors: state.authors
   };
