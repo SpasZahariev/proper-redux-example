@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
 import { Redirect } from "react-router-dom";
+import Spinner from "../common/Spinner";
 
 class CoursesPage extends React.Component {
   state = {
@@ -52,17 +53,20 @@ class CoursesPage extends React.Component {
         {/* lol righthand side only evaluates if left hand side is true !!! */}
         {this.state.redirectToAddCoursePage && <Redirect to="/course" />}
         <h2>Courses</h2>
-        <button
-          style={{ marginBottm: 20 }}
-          className="btn btn-primary add-course"
-          onClick={() => this.setState({ redirectToAddCoursePage: true })}
-        >
-          Add Course
-        </button>
-        <CourseList courses={this.props.courses}></CourseList>
-        {/* {this.props.courses.map(course => (
-          <div key={course.title}>{course.title}</div>
-        ))} */}
+        {this.props.isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <button
+              style={{ marginBottm: 20 }}
+              className="btn btn-primary add-course"
+              onClick={() => this.setState({ redirectToAddCoursePage: true })}
+            >
+              Add Course
+            </button>
+            <CourseList courses={this.props.courses}></CourseList>
+          </>
+        )}
       </>
     );
   }
@@ -72,7 +76,8 @@ CoursesPage.propTypes = {
   courses: PropTypes.array.isRequired,
   authors: PropTypes.array.isRequired,
   cActions: PropTypes.object.isRequired,
-  aActions: PropTypes.object.isRequired
+  aActions: PropTypes.object.isRequired,
+  isLoading: PropTypes.bool.isRequired
 };
 
 //determines what part of the global state is passed in the props to this component
@@ -90,7 +95,8 @@ function mapStateToProps(state) {
               authorName: state.authors.find(a => a.id === course.authorId).name
             };
           }),
-    authors: state.authors
+    authors: state.authors,
+    isLoading: state.apiCallsInProgress > 0
   };
 }
 
