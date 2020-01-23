@@ -7,6 +7,7 @@ import { bindActionCreators } from "redux";
 import CourseList from "./CourseList";
 import { Redirect } from "react-router-dom";
 import Spinner from "../common/Spinner";
+import { toast } from "react-toastify";
 
 class CoursesPage extends React.Component {
   state = {
@@ -46,6 +47,15 @@ class CoursesPage extends React.Component {
   //   this.props.actions.createCourse(this.state.course);
   // };
 
+  handleDeleteCourse = async course => {
+    toast.success("Course deleted!");
+    try {
+      await this.props.cActions.deleteCourse(course);
+    } catch (error) {
+      toast.error("Delete failed. " + error.message, { autoClose: false });
+    }
+  };
+
   render() {
     return (
       // if onSubmit is assigned in the form and not on a button => you can submit by pressing enter too!
@@ -64,7 +74,10 @@ class CoursesPage extends React.Component {
             >
               Add Course
             </button>
-            <CourseList courses={this.props.courses}></CourseList>
+            <CourseList
+              onDeleteClick={this.handleDeleteCourse}
+              courses={this.props.courses}
+            ></CourseList>
           </>
         )}
       </>
