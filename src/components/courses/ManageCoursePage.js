@@ -8,7 +8,8 @@ import { newCourse } from "../../../tools/mockData";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
 
-function ManageCoursePage(props) {
+//this export is for testing -> it will export the unconnected component -> reducing boilerplate in test
+export function ManageCoursePage(props) {
   const {
     courses,
     authors,
